@@ -19,7 +19,7 @@ services:
       - ./data/nginx/default.conf:/etc/nginx/conf.d/default.conf
       - ./data/nginx/server.crt:/etc/nginx/server.crt
       - ./data/nginx/server.key:/etc/nginx/server.key
-      - ./data/src/app:/app
+      - ./data/node/src/app:/app
 
   typescript-node:
     image: node:10
@@ -28,7 +28,7 @@ services:
     tty: true
     working_dir: /usr/src/app # コンテナ起動後のカレントディレクトリ。npm install を実行するため。package.jsonがあるディレクトリを指定する。
     volumes:
-      - ./data/src:/usr/src/app
+      - ./data/node/src:/usr/src/app
 
   typescript-db:
     image: mysql:5.7.28
