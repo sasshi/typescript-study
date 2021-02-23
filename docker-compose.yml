@@ -1,0 +1,45 @@
+#参考：https://qiita.com/A-Kira/items/1c55ef689c0f91420e81
+#参考：https://amaya382.hatenablog.jp/entry/2017/04/03/034002
+#参考：https://hacknote.jp/archives/56828/ #Windowsでdocker mysqlに接続できないエラー
+#参考：https://qiita.com/mom0tomo/items/35dfacb628df1bd3651e
+#参考：https://suin.io/540#:~:text=%3A%20%E3%81%AE%E3%82%A4%E3%83%A1%E3%83%BC%E3%82%B8%E3%81%8C%E3%81%A7%E3%81%8D%E3%82%8B%E3%81%AE,%E3%81%AA%E3%82%8B%E3%81%A8%E3%81%84%E3%81%86%E3%82%8F%E3%81%91%E3%81%A7%E3%81%99%E3%81%AD%E3%80%82
+#参考：https://hacknote.jp/archives/56828/
+
+version: "3.3"
+
+services:
+  typescript-nginx:
+    image: typescript-nginx
+    container_name: 'typescript-nginx'
+    build: ./data/nginx
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./data/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./data/nginx/server.crt:/etc/nginx/server.crt
+      - ./data/nginx/server.key:/etc/nginx/server.key
+      - ./data/src/app:/app
+
+  typescript-node:
+    image: node:10
+    container_name: typescript-node
+    build: ./data/node
+    tty: true
+    working_dir: /usr/src/app # コンテナ起動後のカレントディレクトリ。npm install を実行するため。package.jsonがあるディレクトリを指定する。
+    volumes:
+      - ./data/src:/usr/src/app
+
+  typescript-db:
+    image: mysql:5.7.28
+    container_name: typescript-db
+    ports:
+      - 3306:3306
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: test
+      MYSQL_USER: test
+      MYSQL_PASSWORD: test
+      TZ: 'Asia/Tokyo'
